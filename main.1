@@ -1,0 +1,109 @@
+#include <iostream>
+#include <cstring>
+
+class Person {
+private:
+    char* fullName;
+
+public:
+    Person(const char* name) {
+        fullName = new char[strlen(name) + 1];
+        strcpy(fullName, name);
+    }
+
+    Person(const Person& other) {
+        fullName = new char[strlen(other.fullName) + 1];
+        strcpy(fullName, other.fullName);
+    }
+
+    ~Person() {
+        delete[] fullName;
+    }
+
+    const char* getFullName() const {
+        return fullName;
+    }
+};
+
+class Apartment {
+private:
+    Person* residents;
+    int numResidents;
+
+public:
+    Apartment(int capacity) {
+        residents = new Person[capacity];
+        numResidents = 0;
+    }
+
+    Apartment(const Apartment& other) {
+        numResidents = other.numResidents;
+        residents = new Person[numResidents];
+        for (int i = 0; i < numResidents; ++i) {
+            residents[i] = other.residents[i];
+        }
+    }
+
+    ~Apartment() {
+        delete[] residents;
+    }
+
+    void addResident(const Person& person) {
+        residents[numResidents++] = person;
+    }
+
+    int getNumResidents() const {
+        return numResidents;
+    }
+};
+
+class House {
+private:
+    Apartment* apartments;
+    int numApartments;
+
+public:
+    House(int capacity) {
+        apartments = new Apartment[capacity];
+        numApartments = 0;
+    }
+
+    House(const House& other) {
+        numApartments = other.numApartments;
+        apartments = new Apartment[numApartments];
+        for (int i = 0; i < numApartments; ++i) {
+            apartments[i] = other.apartments[i];
+        }
+    }
+
+    ~House() {
+        delete[] apartments;
+    }
+
+    void addApartment(const Apartment& apartment) {
+        apartments[numApartments++] = apartment;
+    }
+
+    int getNumApartments() const {
+        return numApartments;
+    }
+};
+
+int main() {
+    Person person1("John Doe");
+    Person person2("Jane Doe");
+
+    Apartment apartment1(2);
+    apartment1.addResident(person1);
+    apartment1.addResident(person2);
+
+    Apartment apartment2 = apartment1;
+
+    House house(2);
+    house.addApartment(apartment1);
+    house.addApartment(apartment2);
+
+    std::cout << "Number of apartments in the house: " << house.getNumApartments() << std::endl;
+
+    return 0;
+}
